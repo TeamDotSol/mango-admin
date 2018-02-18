@@ -81,7 +81,11 @@ switch (command) {
   case 'create':
     console.log('Creating new repository with administrator ' + from)
 
-    web3.eth.contract(repoABI).new({ data: repoCode, from: from }, function (err, contract) {
+    web3.eth.contract(repoABI).new({
+        data: repoCode,
+        from: from,
+        gas: 20000000
+    }, function (err, contract) {
       if (err) {
         console.log('Error: ' + err)
         return
@@ -143,7 +147,7 @@ switch (command) {
     console.log('Marking ' + argv.repo + ' as obsolete')
     ensureRepo()
 
-    web3.eth.contract(repoABI).at(argv.repo).setObsolete({ from: from }, function (err, contract) {
+    web3.eth.contract(repoABI).at(argv.repo).setObsolete({ from: from, gas: 20000000 }, function (err, contract) {
       if (err) {
         console.log('Error: ' + err)
         return
