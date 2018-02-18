@@ -91,9 +91,9 @@ switch (command) {
       console.log('balance', balance.toString())
 
       const transaction = {
-          data: repoCode,
+          data: '0x' + repoCode,
           from: address,
-          gasPrice: 4,
+          gasPrice: 20000000000,
           gasLimit: 2000000,
           nonce: web3.eth.getTransactionCount(address)
       }

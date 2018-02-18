@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2cb6bf7f-7e4c-4d90-8b74-aa1c073d411a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mango-admin" afterPath="$PROJECT_DIR$/mango-admin" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -23,36 +23,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="mango-admin" pinned="false" current-in-tab="false">
+      <file leaf-file-name="mango-admin" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mango-admin">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="344">
-              <caret line="101" column="23" lean-forward="false" selection-start-line="101" selection-start-column="23" selection-end-line="101" selection-end-column="23" />
+            <state relative-caret-position="296">
+              <caret line="93" column="23" lean-forward="false" selection-start-line="93" selection-start-column="23" selection-end-line="93" selection-end-column="23" />
               <folding>
-                <marker date="1518929984945" expanded="true" signature="1866:1903" ph="{...}" />
-                <marker date="1518929984945" expanded="true" signature="2047:5468" ph="{...}" />
-                <marker date="1518929984945" expanded="true" signature="2065:3196" ph="..." />
-                <marker date="1518929984945" expanded="true" signature="2897:3184" ph="{...}" />
-                <marker date="1518929984945" expanded="true" signature="2977:3055" ph="{...}" />
-                <marker date="1518929984945" expanded="true" signature="3091:3175" ph="{...}" />
-                <marker date="1518929984945" expanded="true" signature="3214:4185" ph="..." />
-                <marker date="1518929984945" expanded="true" signature="4205:4542" ph="..." />
-                <marker date="1518929984945" expanded="true" signature="4563:5001" ph="..." />
-                <marker date="1518929984945" expanded="true" signature="5024:5466" ph="..." />
+                <marker date="1518930683585" expanded="true" signature="1866:1903" ph="{...}" />
+                <marker date="1518930683585" expanded="true" signature="2047:5485" ph="{...}" />
+                <marker date="1518930683585" expanded="true" signature="2065:3213" ph="..." />
+                <marker date="1518930683585" expanded="true" signature="2914:3201" ph="{...}" />
+                <marker date="1518930683585" expanded="true" signature="2994:3072" ph="{...}" />
+                <marker date="1518930683585" expanded="true" signature="3108:3192" ph="{...}" />
+                <marker date="1518930683585" expanded="true" signature="3231:4202" ph="..." />
+                <marker date="1518930683585" expanded="true" signature="4222:4559" ph="..." />
+                <marker date="1518930683585" expanded="true" signature="4580:5018" ph="..." />
+                <marker date="1518930683585" expanded="true" signature="5041:5483" ph="..." />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-            <state split_layout="SPLIT">
-              <first_editor relative-caret-position="120">
-                <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-                <folding />
-              </first_editor>
-              <second_editor />
             </state>
           </provider>
         </entry>
@@ -83,8 +70,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/mango-admin" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/mango-admin" />
       </list>
     </option>
   </component>
@@ -166,12 +153,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1518920450845</updated>
-      <workItem from="1518920453072" duration="7038000" />
+      <workItem from="1518920453072" duration="7333000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7038000" />
+    <option name="totallyTimeSpent" value="7333000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="467" y="23" width="973" height="835" extended-state="0" />
@@ -185,7 +172,7 @@
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32872927" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32872927" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -219,33 +206,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mango-admin">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="101" column="23" lean-forward="false" selection-start-line="101" selection-start-column="23" selection-end-line="101" selection-end-column="23" />
-          <folding>
-            <marker date="1518929984945" expanded="true" signature="1866:1903" ph="{...}" />
-            <marker date="1518929984945" expanded="true" signature="2047:5468" ph="{...}" />
-            <marker date="1518929984945" expanded="true" signature="2065:3196" ph="..." />
-            <marker date="1518929984945" expanded="true" signature="2897:3184" ph="{...}" />
-            <marker date="1518929984945" expanded="true" signature="2977:3055" ph="{...}" />
-            <marker date="1518929984945" expanded="true" signature="3091:3175" ph="{...}" />
-            <marker date="1518929984945" expanded="true" signature="3214:4185" ph="..." />
-            <marker date="1518929984945" expanded="true" signature="4205:4542" ph="..." />
-            <marker date="1518929984945" expanded="true" signature="4563:5001" ph="..." />
-            <marker date="1518929984945" expanded="true" signature="5024:5466" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="120">
-            <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <first_editor relative-caret-position="-312">
+            <caret line="9" column="8" lean-forward="true" selection-start-line="9" selection-start-column="8" selection-end-line="9" selection-end-column="8" />
             <folding />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mango-admin">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="296">
+          <caret line="93" column="23" lean-forward="false" selection-start-line="93" selection-start-column="23" selection-end-line="93" selection-end-column="23" />
+          <folding>
+            <marker date="1518930683585" expanded="true" signature="1866:1903" ph="{...}" />
+            <marker date="1518930683585" expanded="true" signature="2047:5485" ph="{...}" />
+            <marker date="1518930683585" expanded="true" signature="2065:3213" ph="..." />
+            <marker date="1518930683585" expanded="true" signature="2914:3201" ph="{...}" />
+            <marker date="1518930683585" expanded="true" signature="2994:3072" ph="{...}" />
+            <marker date="1518930683585" expanded="true" signature="3108:3192" ph="{...}" />
+            <marker date="1518930683585" expanded="true" signature="3231:4202" ph="..." />
+            <marker date="1518930683585" expanded="true" signature="4222:4559" ph="..." />
+            <marker date="1518930683585" expanded="true" signature="4580:5018" ph="..." />
+            <marker date="1518930683585" expanded="true" signature="5041:5483" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
