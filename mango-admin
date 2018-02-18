@@ -3,9 +3,10 @@
 var fs = require('fs')
 var Web3 = require('web3')
 var web3 = new Web3()
-var repoABI = require('./contracts/MangoRepoABI.json')
+var repoABI = require('./contracts/OrganizationABI.json')
 var path = require('path')
-var repoCode = fs.readFileSync(path.join(__dirname, 'contracts') + '/MangoRepo.bin').toString()
+var _ = require('lodash')
+var SolidityFunction = require('web3/lib/web3/function')
 
 var yargs = require('yargs')
   .usage('Usage: $0 [command]')
@@ -14,20 +15,17 @@ var yargs = require('yargs')
     describe: 'Repository address',
     type: 'string'
   })
-  .option('admin', {
-    describe: 'Treat as administrator',
-    type: 'boolean'
-  })
   .option('account', {
     describe: 'Sender account (a current administrator)',
     type: 'string'
   })
-  .global([ 'repo', 'admin' ])
-  .command('status', 'Check status of repository')
+  .option('name', {
+      describe: 'Repository name',
+      type: 'string'
+  })
+  .global([ 'repo', 'name' ])
+  .command('list', 'List repositories')
   .command('create', 'Create repository')
-  .command('obsolete', 'Mark repository obsolete')
-  .command('authorize <address>', 'Authorize account with write access')
-  .command('deauthorize <address>', 'Deauthorize account')
   .strict()
   .version()
   .showHelpOnFail(false, 'Specify --help for available options')
@@ -62,149 +60,61 @@ function ensureAccount (account) {
   }
 }
 
-console.log('Initialising...')
-
 const privateKey = process.env.PRIVATE_KEY
 const address = process.env.ADDRESS
+const contractAddress = process.env.CONTRACT_ADDRESS
 
-// https://rinkeby.infura.io/AQLPHGoZNh6Ktd33vkIg
-// http://localhost:8545
 web3.setProvider(new web3.providers.HttpProvider('https://rinkeby.infura.io/AQLPHGoZNh6Ktd33vkIg'))
-web3.eth.defaultAccount = privateKey
-
-var from
-if (argv.account) {
-  ensureAccount(argv.account)
-  from = argv.account
-} else {
-  from = web3.eth.defaultAccount
-}
 
 switch (command) {
   case 'create':
-    console.log('Creating new repository with administrator ' + from)
-
-      const privateKey = '505bdbc30b8f84d06dbfb4c780a5504c87a2a13731f11c41c0f9b4247b719985'
-      const key = new Buffer(privateKey, 'hex')
-
-      const balance = web3.eth.getBalance(address)
-      console.log('balance', balance.toString())
-
-      const transaction = {
-          data: '0x' + repoCode,
-          from: address,
-          gasPrice: 20000000000,
-          gasLimit: 2000000,
-          nonce: web3.eth.getTransactionCount(address)
-      }
-
-      const Tx = require('ethereumjs-tx')
-      var tx = new Tx(transaction)
-
-      tx.sign(key)
-
-      var stx = tx.serialize();
-      web3.eth.sendRawTransaction('0x' + stx.toString('hex'), (err, hash) => {
-          if (err) { console.log(err); return; }
-          console.log('contract creation tx: ' + hash);
-      });
-
-      // Second callback will have the address
-    //   if (contract.address) {
-    //     console.log('Repository created: ' + contract.address)
-    //   } else if (contract.transactionHash) {
-    //     console.log('Sent transaction: ' + contract.transactionHash)
-    //   }
-    // })
-
-    break
-
-  case 'status':
-    console.log('Checking status of repository ' + argv.repo)
-    ensureRepo()
-
-    var contract = web3.eth.contract(repoABI).at(argv.repo)
-
-    var version = contract.repoInterfaceVersion().toNumber()
-    if (version !== 1) {
-      abort('Not a Mango repository?')
-    }
-
-    if (web3.eth.contract(repoABI).at(argv.repo).isObsolete()) {
-      console.log('Repository is marked as OBSOLETE')
-    }
-
-    var i
-    var name
-    var ref
-    var refCount = contract.refCount().toNumber()
-
-    if (!refCount) {
-      console.log('No references')
-    }
-
-    for (i = 0; i < refCount; i++) {
-      name = contract.refName(i)
-      ref = contract.getRef(name)
-      console.log('Reference: ' + name + ' -> ' + ref)
-    }
-
-    var snapshotCount = contract.snapshotCount().toNumber()
-
-    if (!snapshotCount) {
-      console.log('No snapshosts')
-    }
-
-    for (i = 0; i < snapshotCount; i++) {
-      console.log('Snaphost #' + i + ': ' + contract.getSnapshot(i))
-    }
-
-    break
-
-  case 'obsolete':
-    console.log('Marking ' + argv.repo + ' as obsolete')
-    ensureRepo()
-
-    web3.eth.contract(repoABI).at(argv.repo).setObsolete({ from: from, gas: 20000000 }, function (err, contract) {
-      if (err) {
-        console.log('Error: ' + err)
-        return
-      }
-
-      console.log('Sent transaction: ' + contract)
+    let repoName = web3.fromAscii(argv.name)
+    sendFunction('createRepo', [repoName], function (err, results) {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log(results)
+        }
     })
 
     break
 
-  case 'authorize':
-    console.log('Authorizing ' + argv.address + ' for ' + argv.repo + ' as ' + (argv.admin ? 'admin' : 'committer'))
-    ensureRepo()
-    ensureAccount(argv.address)
-
-    web3.eth.contract(repoABI).at(argv.repo).authorize(argv.address, argv.admin, { from: from }, function (err, contract) {
-      if (err) {
-        console.log('Error: ' + err)
-        return
-      }
-
-      console.log('Sent transaction: ' + contract)
-    })
-
+  case 'list':
+    let repos = web3.eth.contract(repoABI).at(argv.repo).listRepos()
+    for (let repo of repos) {
+        console.log(web3.toAscii(repo))
+    }
     break
+}
 
-  case 'deauthorize':
-    console.log('Deauthorizing ' + argv.address + ' for ' + argv.repo + ' as ' + (argv.admin ? 'admin' : 'committer'))
-    ensureRepo()
-    ensureAccount(argv.address)
+function sendFunction (functionName, payload, callback) {
+    var solidityFunction = new SolidityFunction('', _.find(repoABI, { name: functionName }), '');
+    const txhash = solidityFunction.toPayload(payload).data
 
-    web3.eth.contract(repoABI).at(argv.repo).deauthorize(argv.address, argv.admin, { from: from }, function (err, contract) {
-      if (err) {
-        console.log('Error: ' + err)
-        return
-      }
+    const key = new Buffer(privateKey, 'hex')
+    const balance = web3.eth.getBalance(address)
+    console.log('balance', balance.toString())
 
-      console.log('Sent transaction: ' + contract)
-    })
+    const transaction = {
+        data: txhash,
+        from: address,
+        to: contractAddress,
+        gasPrice: 20000000000,
+        gasLimit: 2000000,
+        nonce: web3.eth.getTransactionCount(address)
+    }
 
-    break
+    const Tx = require('ethereumjs-tx')
+    var tx = new Tx(transaction)
+
+    tx.sign(key)
+
+    var stx = tx.serialize();
+    web3.eth.sendRawTransaction('0x' + stx.toString('hex'), function (err, results) {
+        if (err) {
+            callback(err, null)
+        } else {
+            callback(null, results)
+        }
+    });
 }
