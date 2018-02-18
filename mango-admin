@@ -64,10 +64,13 @@ function ensureAccount (account) {
 
 console.log('Initialising...')
 
-web3.setProvider(new web3.providers.HttpProvider(process.env['ETHEREUM_RPC_URL'] || 'http://localhost:8545'))
-if (!web3.eth.defaultAccount) {
-  web3.eth.defaultAccount = web3.eth.coinbase
-}
+const privateKey = process.env.PRIVATE_KEY
+const address = process.env.ADDRESS
+
+// https://rinkeby.infura.io/AQLPHGoZNh6Ktd33vkIg
+// http://localhost:8545
+web3.setProvider(new web3.providers.HttpProvider('https://rinkeby.infura.io/AQLPHGoZNh6Ktd33vkIg'))
+web3.eth.defaultAccount = privateKey
 
 var from
 if (argv.account) {
@@ -81,23 +84,38 @@ switch (command) {
   case 'create':
     console.log('Creating new repository with administrator ' + from)
 
-    web3.eth.contract(repoABI).new({
-        data: repoCode,
-        from: from,
-        gas: 20000000
-    }, function (err, contract) {
-      if (err) {
-        console.log('Error: ' + err)
-        return
+      const privateKey = '505bdbc30b8f84d06dbfb4c780a5504c87a2a13731f11c41c0f9b4247b719985'
+      const key = new Buffer(privateKey, 'hex')
+
+      const balance = web3.eth.getBalance(address)
+      console.log('balance', balance.toString())
+
+      const transaction = {
+          data: repoCode,
+          from: address,
+          gasPrice: 4,
+          gasLimit: 2000000,
+          nonce: web3.eth.getTransactionCount(address)
       }
 
+      const Tx = require('ethereumjs-tx')
+      var tx = new Tx(transaction)
+
+      tx.sign(key)
+
+      var stx = tx.serialize();
+      web3.eth.sendRawTransaction('0x' + stx.toString('hex'), (err, hash) => {
+          if (err) { console.log(err); return; }
+          console.log('contract creation tx: ' + hash);
+      });
+
       // Second callback will have the address
-      if (contract.address) {
-        console.log('Repository created: ' + contract.address)
-      } else if (contract.transactionHash) {
-        console.log('Sent transaction: ' + contract.transactionHash)
-      }
-    })
+    //   if (contract.address) {
+    //     console.log('Repository created: ' + contract.address)
+    //   } else if (contract.transactionHash) {
+    //     console.log('Sent transaction: ' + contract.transactionHash)
+    //   }
+    // })
 
     break
 

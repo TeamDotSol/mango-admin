@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/axic/mango-admin#readme",
   "dependencies": {
-    "web3": "^0.16.0",
+    "ethereumjs-util": "^5.1.4",
+    "web3": "^0.18.4",
     "yargs": "^4.7.1"
   },
   "yargs": {
