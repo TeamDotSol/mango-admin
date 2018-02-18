@@ -1,14 +1,23 @@
 #!/usr/bin/env node
 
-var fs = require('fs')
-var Web3 = require('web3')
-var web3 = new Web3()
-var repoABI = require('./contracts/OrganizationABI.json')
-var path = require('path')
-var _ = require('lodash')
-var SolidityFunction = require('web3/lib/web3/function')
+const fs = require('fs')
+const Web3 = require('web3')
+const web3 = new Web3()
+const organizationABI = require('./contracts/OrganizationABI.json')
+const repoABI = require('./contracts/RepositoryABI.json')
+const path = require('path')
+const _ = require('lodash')
+const SolidityFunction = require('web3/lib/web3/function')
+const IPFS = require('./lib/ipfs')
+const ipfs = new IPFS()
+const childProcess = require('child_process')
 
-var yargs = require('yargs')
+// ENV Vars
+const privateKey = process.env.PRIVATE_KEY
+const address = process.env.ADDRESS
+const contractAddress = process.env.CONTRACT_ADDRESS
+
+const yargs = require('yargs')
   .usage('Usage: $0 [command]')
   .option('R', {
     alias: 'repo',
@@ -23,17 +32,32 @@ var yargs = require('yargs')
       describe: 'Repository name',
       type: 'string'
   })
-  .global([ 'repo', 'name' ])
+  .option('path', {
+      describe: 'Repository path',
+      type: 'string'
+  })
+  .option('D', {
+      alias: 'directory',
+      describe: 'Repository directory',
+      type: 'string'
+  })
+  .option('hash', {
+      describe: 'Git commit hash',
+      type: 'string'
+  })
+  .global([ 'repo', 'name', 'directory', 'hash' ])
   .command('list', 'List repositories')
   .command('create', 'Create repository')
+  .command('push', 'Push repository')
+  .command('pull', 'Pull repository')
   .strict()
   .version()
   .showHelpOnFail(false, 'Specify --help for available options')
   .help()
   .demand(1, 'Must provide a command')
 
-var argv = yargs.argv
-var command = argv._[0]
+const argv = yargs.argv
+const command = argv._[0]
 
 function abort (msg) {
   console.log(msg || 'Error occured')
@@ -60,42 +84,66 @@ function ensureAccount (account) {
   }
 }
 
-const privateKey = process.env.PRIVATE_KEY
-const address = process.env.ADDRESS
-const contractAddress = process.env.CONTRACT_ADDRESS
+async function main () {
+    // 'https://rinkeby.infura.io/AQLPHGoZNh6Ktd33vkIg'
+    web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'))
 
-web3.setProvider(new web3.providers.HttpProvider('https://rinkeby.infura.io/AQLPHGoZNh6Ktd33vkIg'))
-
-switch (command) {
-  case 'create':
-    let repoName = web3.fromAscii(argv.name)
-    sendFunction('createRepo', [repoName], function (err, results) {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log(results)
-        }
-    })
-
-    break
-
-  case 'list':
-    let repos = web3.eth.contract(repoABI).at(argv.repo).listRepos()
-    for (let repo of repos) {
-        console.log(web3.toAscii(repo))
+    switch (command) {
+        case 'create':
+            let repoName = web3.fromAscii(argv.name)
+            sendFunction('createRepo', [repoName], function (err, results) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log(results)
+                }
+            })
+            break
+        case 'list':
+            let repos = web3.eth.contract(organizationABI).at(contractAddress).listRepos()
+            for (let repo of repos) {
+                console.log(web3.toAscii(repo))
+            }
+            break
+        case 'push':
+            let folder = argv.directory
+            let repositoryName = argv.name
+            let directory = await ipfs.create(folder)
+            let newDirectory = await ipfs.push(directory, folder)
+            let commitHash = childProcess.execSync(`cd ${folder} && git rev-parse HEAD`).toString().trim()
+            console.log(commitHash, newDirectory, repositoryName, 'refs/heads/master')
+            let gitHash = web3.fromAscii(commitHash)
+            let ipfsHash = newDirectory
+            let repository = web3.fromAscii(repositoryName)
+            let gitRef = web3.fromAscii('refs/heads/master')
+            sendFunction('commit', [gitHash, ipfsHash, repository, gitRef], function (err, results) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log('Finished Push: ', results)
+                }
+            })
+            break
+        case 'pull':
+            let hash = web3.fromAscii(argv.hash)
+            let repoAddress = web3.eth.contract(organizationABI).at(contractAddress).getRepo(web3.fromAscii('example'))
+            let commits = web3.eth.contract(repoABI).at(repoAddress).commits(hash)
+            console.log(commits)
+            break
     }
-    break
 }
 
-function sendFunction (functionName, payload, callback) {
-    var solidityFunction = new SolidityFunction('', _.find(repoABI, { name: functionName }), '');
-    const txhash = solidityFunction.toPayload(payload).data
+main()
 
-    const key = new Buffer(privateKey, 'hex')
-    const balance = web3.eth.getBalance(address)
+function sendFunction (functionName, payload, callback) {
+    let solidityFunction = new SolidityFunction('', _.find(organizationABI, { name: functionName }), '');
+    let txhash = solidityFunction.toPayload(payload).data
+
+    let key = new Buffer(privateKey, 'hex')
+    let balance = web3.eth.getBalance(address)
     console.log('balance', balance.toString())
 
-    const transaction = {
+    let transaction = {
         data: txhash,
         from: address,
         to: contractAddress,
@@ -104,12 +152,12 @@ function sendFunction (functionName, payload, callback) {
         nonce: web3.eth.getTransactionCount(address)
     }
 
-    const Tx = require('ethereumjs-tx')
-    var tx = new Tx(transaction)
+    let Tx = require('ethereumjs-tx')
+    let tx = new Tx(transaction)
 
     tx.sign(key)
 
-    var stx = tx.serialize();
+    let stx = tx.serialize();
     web3.eth.sendRawTransaction('0x' + stx.toString('hex'), function (err, results) {
         if (err) {
             callback(err, null)
